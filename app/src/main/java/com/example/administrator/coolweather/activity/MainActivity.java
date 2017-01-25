@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -167,7 +166,6 @@ public class MainActivity extends Activity {
         else if (type.equals(REGION.REGION_COUNTY)) {
             address = "http://www.weather.com.cn/data/city3jdata/station/"+code+".html";
         }
-        Log.d(TAG, "&&&&&&&&&&&&&&&&&&&&&&&");
         showProgressDialog();
         HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
             @Override
@@ -189,7 +187,6 @@ public class MainActivity extends Activity {
                         public void run() {
                             closeProgressDialog();
                             if (type.equals(REGION.REGION_PROVINCE)) {
-                                //Log.d(TAG, "************************");
                                 queryProvinces();
                             }
                             else if (type.equals(REGION.REGION_CITY)) {
