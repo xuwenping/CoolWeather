@@ -168,6 +168,7 @@ public class MainActivity extends Activity {
             address = "http://www.weather.com.cn/data/city3jdata/station/"+code+".html";
         }
         Log.d(TAG, "&&&&&&&&&&&&&&&&&&&&&&&");
+        showProgressDialog();
         HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
@@ -186,6 +187,7 @@ public class MainActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            closeProgressDialog();
                             if (type.equals(REGION.REGION_PROVINCE)) {
                                 //Log.d(TAG, "************************");
                                 queryProvinces();
@@ -206,10 +208,39 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        closeProgressDialog();
                         Toast.makeText(MainActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
+    }
+
+    private void showProgressDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("正在加载中...");
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+
+        progressDialog.show();
+    }
+
+    private void closeProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+    }
+
+    public void onBackPressed() {
+        if (currentLevel == LEVEL_COUNTY) {
+            queryCities();
+        }
+        else if (currentLevel == LEVEL_CITY) {
+            queryProvinces();
+        }
+        else {
+            finish();
+        }
     }
 }
