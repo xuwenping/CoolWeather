@@ -1,12 +1,15 @@
 package com.example.administrator.coolweather.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,7 +18,7 @@ import com.example.administrator.coolweather.util.HttpCallbackListener;
 import com.example.administrator.coolweather.util.HttpUtil;
 import com.example.administrator.coolweather.util.Utility;
 
-public class WeatherActivity extends Activity {
+public class WeatherActivity extends Activity implements View.OnClickListener{
 
     private static final String TAG = "WeatherActivity";
 
@@ -51,6 +54,15 @@ public class WeatherActivity extends Activity {
      */
     private TextView currentDateText;
 
+    /**
+     * 切换城市按钮
+     */
+    private Button switchCity;
+
+    /**
+     * 更新天气按钮
+     */
+    private Button refreshWeather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +77,11 @@ public class WeatherActivity extends Activity {
         highTempText = (TextView) findViewById(R.id.temp1);
         lowTempText = (TextView) findViewById(R.id.temp2);
         currentDateText = (TextView) findViewById(R.id.current_date);
+        switchCity = (Button) findViewById(R.id.switch_city);
+        switchCity.setOnClickListener(this);
+        refreshWeather = (Button) findViewById(R.id.refresh_weather);
+        refreshWeather.setOnClickListener(this);
+
         String countryName = getIntent().getStringExtra("country_name");
         weatherDesp.setText("同步中");
         weatherInfoLayout.setVisibility(View.INVISIBLE);
@@ -72,6 +89,29 @@ public class WeatherActivity extends Activity {
         String address = "http://wthrcdn.etouch.cn/weather_mini?city="+countryName;
         Log.d(TAG, "The address is " + address);
         queryFromServer(address);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.switch_city:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("from_weather_activity", true);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.refresh_weather:
+                weatherDesp.setText("同步中...");
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String countryName = prefs.getString("city_name", "");
+                if (!TextUtils.isEmpty(countryName)) {
+                    String address = "http://wthrcdn.etouch.cn/weather_mini?city="+countryName;
+                    queryFromServer(address);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void queryFromServer(final String address) {
