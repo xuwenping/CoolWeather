@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.example.administrator.coolweather.receiver.AutoUpdateReceiver;
 import com.example.administrator.coolweather.util.HttpCallbackListener;
@@ -15,6 +16,12 @@ import com.example.administrator.coolweather.util.HttpUtil;
 import com.example.administrator.coolweather.util.Utility;
 
 public class AutoUpdateService extends Service {
+
+    private static final String TAG = "AutoUpdateService";
+
+    private AlarmManager manager;
+    private PendingIntent pi;
+
     public AutoUpdateService() {
     }
 
@@ -32,15 +39,23 @@ public class AutoUpdateService extends Service {
                 updateWeather();
             }
         }).start();
-
-        AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int anHour = 8 * 60 * 60 * 1000;
+        Log.d(TAG, "Test-onStartCommand()");
+        manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        //int anHour = 8 * 60 * 60 * 1000;
+        int anHour = 10 * 1000;
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
         Intent i = new Intent(this, AutoUpdateReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+        pi = PendingIntent.getBroadcast(this, 0, i, 0);
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "Test-onDestroy()");
+        manager.cancel(pi);
+        super.onDestroy();
     }
 
     /**

@@ -20,14 +20,16 @@
         <activity android:name=".activity.WeatherActivity" />
 
         <service
-            android:name="com.example.administrator.coolweather.service.AutoUpdateService"
+            android:name=".service.AutoUpdateService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
             android:name=".receiver.AutoUpdateReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <activity android:name=".activity.SettingActivity"></activity>
     </application>
 
 </manifest>

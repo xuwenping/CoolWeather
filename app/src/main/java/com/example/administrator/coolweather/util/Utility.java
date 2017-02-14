@@ -144,4 +144,14 @@ public class Utility {
         editor.putString("current_date", adf.format(new Date()));
         editor.commit();
     }
+
+    /**
+     * 保存配置信息(是否自动更新，更新间隔等)
+     */
+    public static void saveSettingInfo(Context context, boolean bBackendAutoUpdate) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("settingPrefs", Context.MODE_PRIVATE).edit();
+        editor.putBoolean("backend_auto_update", bBackendAutoUpdate);
+        editor.putBoolean("first_instatll", true);
+        editor.commit();
+    }
 }

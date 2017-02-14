@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +29,7 @@ import com.example.administrator.coolweather.util.Utility;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener{
 
     private static final String TAG = "MainActivity";
 
@@ -81,12 +82,24 @@ public class MainActivity extends Activity {
      */
     private int currentLevel;
 
+    /**
+     * 是否从WeatherActivity中跳转过来
+     */
     private boolean isFromWeatherActivity;
+
+    private Button settingBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Test-onCreate()");
+
+        SharedPreferences settingPrefs = getSharedPreferences("settingPrefs", MODE_PRIVATE);
+        // 如果是第一次安装，初始化相关设置，如果不是首次安装，不更新配置
+        if (!settingPrefs.getBoolean("first_instatll", false)) {
+            Utility.saveSettingInfo(this, true);
+        }
+
         isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("city_selected", false)
@@ -123,7 +136,22 @@ public class MainActivity extends Activity {
             }
         });
 
+        settingBtn = (Button) findViewById(R.id.setting_btn);
+        settingBtn.setOnClickListener(this);
+
         queryProvinces();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.setting_btn:
+                Intent intent = new Intent(this, SettingActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 
     private void queryProvinces() {

@@ -153,8 +153,16 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
         currentDateText.setText(prefs.getString("current_date", ""));
         weatherInfoLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
-        Intent intent = new Intent(this, AutoUpdateService.class);
-        startService(intent);
+
+        SharedPreferences settingPrefs = getSharedPreferences("settingPrefs", MODE_PRIVATE);
+        if (settingPrefs.getBoolean("backend_auto_update", false)) {
+            Intent intent = new Intent(this, AutoUpdateService.class);
+            startService(intent);
+        }
+        else {
+            Intent intent = new Intent(this, AutoUpdateService.class);
+            stopService(intent);
+        }
     }
 
     @Override

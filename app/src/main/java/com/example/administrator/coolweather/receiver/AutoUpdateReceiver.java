@@ -15,6 +15,6 @@ public class AutoUpdateReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         Intent i = new Intent(context, AutoUpdateService.class);
-        context.startActivity(i);
+        context.startService(i);
     }
 }
