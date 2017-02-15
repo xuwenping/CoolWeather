@@ -24,6 +24,7 @@ import com.example.administrator.coolweather.model.County;
 import com.example.administrator.coolweather.model.Province;
 import com.example.administrator.coolweather.util.HttpCallbackListener;
 import com.example.administrator.coolweather.util.HttpUtil;
+import com.example.administrator.coolweather.util.SharepreferencesUtilSystemSettings;
 import com.example.administrator.coolweather.util.Utility;
 
 import java.util.ArrayList;
@@ -97,7 +98,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         SharedPreferences settingPrefs = getSharedPreferences("settingPrefs", MODE_PRIVATE);
         // 如果是第一次安装，初始化相关设置，如果不是首次安装，不更新配置
         if (!settingPrefs.getBoolean("first_instatll", false)) {
-            Utility.saveSettingInfo(this, true);
+            SharepreferencesUtilSystemSettings.putValue(this, "backend_auto_update", true);
+            SharepreferencesUtilSystemSettings.putValue(this, "first_instatll", true);
+            SharepreferencesUtilSystemSettings.putValue(this,"interval", "8");
         }
 
         isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);

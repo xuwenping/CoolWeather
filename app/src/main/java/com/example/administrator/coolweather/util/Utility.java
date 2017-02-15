@@ -148,10 +148,11 @@ public class Utility {
     /**
      * 保存配置信息(是否自动更新，更新间隔等)
      */
-    public static void saveSettingInfo(Context context, boolean bBackendAutoUpdate) {
-        SharedPreferences.Editor editor = context.getSharedPreferences("settingPrefs", Context.MODE_PRIVATE).edit();
-        editor.putBoolean("backend_auto_update", bBackendAutoUpdate);
-        editor.putBoolean("first_instatll", true);
-        editor.commit();
+    public static void saveSettingInfo(Context context,
+                                       boolean bBackendAutoUpdate,
+                                       String interval) {
+        SharepreferencesUtilSystemSettings.putValue(context, "backend_auto_update", bBackendAutoUpdate);
+        SharepreferencesUtilSystemSettings.putValue(context, "first_instatll", true);
+        SharepreferencesUtilSystemSettings.putValue(context,"interval", interval);
     }
 }
