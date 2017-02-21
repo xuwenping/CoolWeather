@@ -95,6 +95,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Test-onCreate()");
 
+
+        float xdpi = getResources().getDisplayMetrics().xdpi;
+        float ydpi = getResources().getDisplayMetrics().ydpi;
+        Log.d(TAG, "xdpi is " + xdpi);
+        Log.d(TAG, "ydpi is " + ydpi);
+        Log.d(TAG, "width is " + getResources().getDisplayMetrics().widthPixels);
+        Log.d(TAG, "heigth is " + getResources().getDisplayMetrics().heightPixels);
+
         SharedPreferences settingPrefs = getSharedPreferences("settingPrefs", MODE_PRIVATE);
         // 如果是第一次安装，初始化相关设置，如果不是首次安装，不更新配置
         if (!settingPrefs.getBoolean("first_instatll", false)) {

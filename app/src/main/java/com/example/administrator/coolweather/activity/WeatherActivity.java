@@ -1,12 +1,16 @@
 package com.example.administrator.coolweather.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -19,7 +23,7 @@ import com.example.administrator.coolweather.util.HttpCallbackListener;
 import com.example.administrator.coolweather.util.HttpUtil;
 import com.example.administrator.coolweather.util.Utility;
 
-public class WeatherActivity extends Activity implements View.OnClickListener{
+public class WeatherActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener{
 
     private static final String TAG = "WeatherActivity";
 
@@ -69,7 +73,8 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Test-onCreate()");
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.weather_layout);
 
         weatherInfoLayout = (LinearLayout) findViewById(R.id.weather_info_layout);
@@ -79,10 +84,10 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
         highTempText = (TextView) findViewById(R.id.temp1);
         lowTempText = (TextView) findViewById(R.id.temp2);
         currentDateText = (TextView) findViewById(R.id.current_date);
-        switchCity = (Button) findViewById(R.id.switch_city);
-        switchCity.setOnClickListener(this);
-        refreshWeather = (Button) findViewById(R.id.refresh_weather);
-        refreshWeather.setOnClickListener(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(this);
 
         String countryName = getIntent().getStringExtra("country_name");
         weatherDesp.setText("同步中");
@@ -91,29 +96,6 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
         String address = "http://wthrcdn.etouch.cn/weather_mini?city="+countryName;
         Log.d(TAG, "The address is " + address);
         queryFromServer(address);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.switch_city:
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("from_weather_activity", true);
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.refresh_weather:
-                weatherDesp.setText("同步中...");
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                String countryName = prefs.getString("city_name", "");
-                if (!TextUtils.isEmpty(countryName)) {
-                    String address = "http://wthrcdn.etouch.cn/weather_mini?city="+countryName;
-                    queryFromServer(address);
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     private void queryFromServer(final String address) {
@@ -142,6 +124,33 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
         });
     }
 
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.switch_city:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("from_weather_activity", true);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.refresh_weather:
+                weatherDesp.setText("同步中...");
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String countryName = prefs.getString("city_name", "");
+                if (!TextUtils.isEmpty(countryName)) {
+                    String address = "http://wthrcdn.etouch.cn/weather_mini?city="+countryName;
+                    queryFromServer(address);
+                }
+                break;
+            default:
+                break;
+        }
+
+        return false;
+    }
+
     private void showWeather() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Log.d(TAG, "The city_name is " + prefs.getString("city_name", ""));
@@ -163,6 +172,15 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
             Intent intent = new Intent(this, AutoUpdateService.class);
             stopService(intent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.config_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
